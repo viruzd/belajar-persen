@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Belajar Persen</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mut:#6b7280;--pri:#4f46e5;--ok:#16a34a;--bad:#dc2626;--bd:#e5e7eb;--soft:#eef2ff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111320;--card:#1b1e30;--tx:#eef0f8;--mut:#9aa1b5;--pri:#818cf8;--bd:#2c3050;--soft:#24284a}}
+:root[data-theme="dark"]{--bg:#111320;--card:#1b1e30;--tx:#eef0f8;--mut:#9aa1b5;--pri:#818cf8;--bd:#2c3050;--soft:#24284a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{max-width:480px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 12px}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:16px;font-weight:600}
+.tabs button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:14px}
+label{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
+input[type=text],input[type=number]{width:100%;padding:12px;font-size:20px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{padding:10px 16px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:16px;font-weight:600}
+.chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+input[type=range]{width:100%;accent-color:var(--pri)}
+.bar{height:34px;border-radius:10px;overflow:hidden;display:flex;background:var(--soft);margin:12px 0}
+.bar .pay{background:var(--pri);transition:width .3s;display:flex;align-items:center;padding-left:10px;color:#fff;font-size:13px;white-space:nowrap}
+.bar .off{background:var(--ok);flex:1;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+.big{font-size:28px;font-weight:700}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:6px 0}
+.mut{color:var(--mut);font-size:14px}
+.steps{background:var(--soft);border-radius:12px;padding:12px;font-size:15px;line-height:1.7}
+.steps b{color:var(--pri)}
+.q{font-size:19px;line-height:1.5;margin:6px 0 12px}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;background:var(--pri);color:#fff;font-size:17px;font-weight:700;margin-top:10px}
+.btn.alt{background:var(--soft);color:var(--pri)}
+.fb{margin-top:12px;padding:12px;border-radius:12px;font-size:16px;line-height:1.6}
+.fb.ok{background:rgba(22,163,74,.15);color:var(--ok)}
+.fb.bad{background:rgba(220,38,38,.12);color:var(--bad)}
+.score{display:flex;justify-content:space-around;text-align:center}
+.score div b{display:block;font-size:24px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🏷️ Belajar Persen</h1>
+<div class="tabs">
+<button id="t1" class="on">Belajar</button>
+<button id="t2">Kuis</button>
+</div>
+
+<section id="learn">
+<div class="card">
+<label for="price">Harga barang (Rp)</label>
+<input id="price" type="text" inputmode="numeric" value="100.000">
+<div class="chips" id="chips"></div>
+<label>Atau geser sendiri: <b id="pv">10</b>%</label>
+<input id="pr" type="range" min="1" max="99" value="10">
+</div>
+<div class="card">
+<div class="row"><span class="mut">Potongan diskon</span><span class="big" style="color:var(--ok)" id="off"></span></div>
+<div class="row"><span class="mut">Harga yang dibayar</span><span class="big" id="pay"></span></div>
+<div class="bar"><div class="pay" id="bpay"></div><div class="off" id="boff"></div></div>
+<div class="steps" id="steps"></div>
+</div>
+</section>
+
+<section id="quiz" hidden>
+<div class="card score">
+<div><b id="sOk">0</b><span class="mut">Benar</span></div>
+<div><b id="sAll">0</b><span class="mut">Soal</span></div>
+<div><b id="sStr">0</b><span class="mut">Beruntun 🔥</span></div>
+</div>
+<div class="card">
+<div class="q" id="qt"></div>
+<input id="ans" type="text" inputmode="numeric" placeholder="Jawaban (angka saja)">
+<button class="btn" id="chk">Cek Jawaban</button>
+<div id="fb"></div>
+<button class="btn alt" id="nxt" hidden>Soal Berikutnya →</button>
+</div>
+</section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const rp=n=>"Rp"+Math.round(n).toLocaleString("id-ID");
+const num=s=>parseInt(String(s).replace(/\D/g,""))||0;
+let pct=10;
+
+// ---- Tab ----
+function tab(n){
+  $("learn").hidden=n!==1;$("quiz").hidden=n!==2;
+  $("t1").classList.toggle("on",n===1);$("t2").classList.toggle("on",n===2);
+  if(n===2&&!cur)newQ();
+}
+$("t1").onclick=()=>tab(1);$("t2").onclick=()=>tab(2);
+
+// ---- Belajar ----
+[10,20,25,50,75].forEach(p=>{
+  const b=document.createElement("button");b.className="chip";b.textContent=p+"%";b.dataset.p=p;
+  b.onclick=()=>{pct=p;$("pr").value=p;render()};$("chips").appendChild(b);
+});
+$("pr").oninput=e=>{pct=+e.target.value;render()};
+$("price").oninput=e=>{const v=num(e.target.value);e.target.value=v?v.toLocaleString("id-ID"):"";render()};
+function render(){
+  const h=num($("price").value),d=h*pct/100,b=h-d;
+  $("pv").textContent=pct;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",+c.dataset.p===pct));
+  $("off").textContent=rp(d);$("pay").textContent=rp(b);
+  $("bpay").style.width=(100-pct)+"%";$("bpay").textContent=pct<85?"Bayar "+(100-pct)+"%":"";
+  $("boff").textContent=pct>=15?"Diskon "+pct+"%":"";
+  $("steps").innerHTML=
+    `<b>Langkah 1 — cari potongan</b><br>${rp(h)} × ${pct} ÷ 100 = <b>${rp(d)}</b><br>`+
+    `<b>Langkah 2 — kurangi harga</b><br>${rp(h)} − ${rp(d)} = <b>${rp(b)}</b><br>`+
+    `<span class="mut">Trik cepat: ${pct}% dari ${rp(h)} = ${rp(h/100)} (1%) × ${pct}</span>`;
+}
+render();
+
+// ---- Kuis ----
+let cur=null,ok=0,all=0,str=0,done=false;
+const prices=[20000,40000,50000,80000,100000,120000,150000,200000,250000,500000];
+const pcts=[10,20,25,50,75];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function newQ(){
+  const h=pick(prices),p=pick(pcts),type=Math.random()<.5?"off":"pay";
+  const d=h*p/100;
+  cur={h,p,type,a:type==="off"?d:h-d,d};
+  $("qt").innerHTML=type==="off"
+    ?`Sebuah barang harganya <b>${rp(h)}</b>, diskon <b>${p}%</b>.<br>Berapa <b>potongan harganya</b>?`
+    :`Sebuah barang harganya <b>${rp(h)}</b>, diskon <b>${p}%</b>.<br>Berapa <b>harga yang harus dibayar</b>?`;
+  $("ans").value="";$("fb").innerHTML="";$("nxt").hidden=true;$("chk").hidden=false;done=false;
+  $("ans").focus();
+}
+function check(){
+  if(done)return;
+  const v=num($("ans").value);if(!$("ans").value)return;
+  done=true;all++;
+  const good=v===cur.a;
+  if(good){ok++;str++}else str=0;
+  const ex=`${rp(cur.h)} × ${cur.p} ÷ 100 = ${rp(cur.d)}`+(cur.type==="pay"?`<br>${rp(cur.h)} − ${rp(cur.d)} = ${rp(cur.a)}`:"");
+  $("fb").innerHTML=good
+    ?`<div class="fb ok">✅ Benar! Jawabannya ${rp(cur.a)}.<br>${ex}</div>`
+    :`<div class="fb bad">❌ Belum tepat. Jawaban yang benar: <b>${rp(cur.a)}</b><br>${ex}</div>`;
+  $("sOk").textContent=ok;$("sAll").textContent=all;$("sStr").textContent=str;
+  $("chk").hidden=true;$("nxt").hidden=false;
+}
+$("chk").onclick=check;$("nxt").onclick=newQ;
+$("ans").oninput=e=>{const v=num(e.target.value);e.target.value=v?v.toLocaleString("id-ID"):""};
+$("ans").onkeydown=e=>{if(e.key==="Enter")done?newQ():check()};
+</script>
+</body>
+</html>
