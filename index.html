@@ -14,141 +14,104 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .app{max-width:480px;margin:0 auto;padding:16px}
 h1{font-size:22px;margin:4px 0 12px}
-.tabs{display:flex;gap:8px;margin-bottom:14px}
-.tabs button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:16px;font-weight:600}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px}
+.tabs button{flex:0 0 auto;padding:10px 14px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:15px;font-weight:600;white-space:nowrap}
 .tabs button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:14px}
-label{font-size:13px;color:var(--mut);display:block;margin-bottom:6px}
-input[type=text],input[type=number]{width:100%;padding:12px;font-size:20px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
-.chip{padding:10px 16px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:16px;font-weight:600}
-.chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
-input[type=range]{width:100%;accent-color:var(--pri)}
-.bar{height:34px;border-radius:10px;overflow:hidden;display:flex;background:var(--soft);margin:12px 0}
-.bar .pay{background:var(--pri);transition:width .3s;display:flex;align-items:center;padding-left:10px;color:#fff;font-size:13px;white-space:nowrap}
-.bar .off{background:var(--ok);flex:1;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
-.big{font-size:28px;font-weight:700}
-.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:6px 0}
-.mut{color:var(--mut);font-size:14px}
+h2{font-size:18px;margin:0 0 6px}
+.mut{color:var(--mut);font-size:14px;line-height:1.5}
+label{font-size:13px;color:var(--mut);display:block;margin:12px 0 6px}
+input[type=text]{width:100%;padding:12px;font-size:20px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{padding:8px 14px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:14px;font-weight:600}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:8px 0}
+.big{font-size:24px;font-weight:700;text-align:right}
+.hl{color:var(--ok)}
+.bar{height:30px;border-radius:10px;overflow:hidden;display:flex;background:var(--soft);margin:12px 0}
+.bar div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;transition:width .3s;white-space:nowrap}
 .steps{background:var(--soft);border-radius:12px;padding:12px;font-size:15px;line-height:1.7}
 .steps b{color:var(--pri)}
-.q{font-size:19px;line-height:1.5;margin:6px 0 12px}
-.btn{width:100%;padding:14px;border:0;border-radius:12px;background:var(--pri);color:#fff;font-size:17px;font-weight:700;margin-top:10px}
-.btn.alt{background:var(--soft);color:var(--pri)}
-.fb{margin-top:12px;padding:12px;border-radius:12px;font-size:16px;line-height:1.6}
-.fb.ok{background:rgba(22,163,74,.15);color:var(--ok)}
-.fb.bad{background:rgba(220,38,38,.12);color:var(--bad)}
-.score{display:flex;justify-content:space-around;text-align:center}
-.score div b{display:block;font-size:24px}
-[hidden]{display:none!important}
+.tip{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(22,163,74,.13);font-size:14px;line-height:1.5}
 </style>
 </head>
 <body>
 <div class="app">
 <h1>🏷️ Belajar Persen</h1>
-<div class="tabs">
-<button id="t1" class="on">Belajar</button>
-<button id="t2">Kuis</button>
+<div class="tabs" id="tabs"></div>
+<div class="card"><h2 id="tt"></h2><div class="mut" id="td"></div><div id="inp"></div><div class="chips" id="ch"></div></div>
+<div class="card" id="res"></div>
 </div>
-
-<section id="learn">
-<div class="card">
-<label for="price">Harga barang (Rp)</label>
-<input id="price" type="text" inputmode="numeric" value="100.000">
-<div class="chips" id="chips"></div>
-<label>Atau geser sendiri: <b id="pv">10</b>%</label>
-<input id="pr" type="range" min="1" max="99" value="10">
-</div>
-<div class="card">
-<div class="row"><span class="mut">Potongan diskon</span><span class="big" style="color:var(--ok)" id="off"></span></div>
-<div class="row"><span class="mut">Harga yang dibayar</span><span class="big" id="pay"></span></div>
-<div class="bar"><div class="pay" id="bpay"></div><div class="off" id="boff"></div></div>
-<div class="steps" id="steps"></div>
-</div>
-</section>
-
-<section id="quiz" hidden>
-<div class="card score">
-<div><b id="sOk">0</b><span class="mut">Benar</span></div>
-<div><b id="sAll">0</b><span class="mut">Soal</span></div>
-<div><b id="sStr">0</b><span class="mut">Beruntun 🔥</span></div>
-</div>
-<div class="card">
-<div class="q" id="qt"></div>
-<input id="ans" type="text" inputmode="numeric" placeholder="Jawaban (angka saja)">
-<button class="btn" id="chk">Cek Jawaban</button>
-<div id="fb"></div>
-<button class="btn alt" id="nxt" hidden>Soal Berikutnya →</button>
-</div>
-</section>
-</div>
-
 <script>
 const $=id=>document.getElementById(id);
 const rp=n=>"Rp"+Math.round(n).toLocaleString("id-ID");
-const num=s=>parseInt(String(s).replace(/\D/g,""))||0;
-let pct=10;
-
-// ---- Tab ----
-function tab(n){
-  $("learn").hidden=n!==1;$("quiz").hidden=n!==2;
-  $("t1").classList.toggle("on",n===1);$("t2").classList.toggle("on",n===2);
-  if(n===2&&!cur)newQ();
+const pc=n=>(Math.round(n*10)/10).toString().replace(".",",")+"%";
+const T=[
+{n:"🏷️ Diskon",t:"Diskon",d:"Berapa potongan dan harga akhir setelah diskon?",
+ f:[["h","Harga barang (Rp)",100000,"rp"],["d","Diskon (%)",10,"pc"]],ex:[[["d",10],["d",20],["d",25],["d",50]]],
+ c:v=>{const o=v.h*v.d/100,b=v.h-o;return{r:[["Potongan",rp(o),1],["Harga dibayar",rp(b)]],bar:[100-v.d,"Bayar "+pc(100-v.d),v.d,"Diskon"],
+ s:`<b>1. Cari potongan</b><br>${rp(v.h)} × ${pc(v.d)} ÷ 100 = <b>${rp(o)}</b><br><b>2. Kurangi harga</b><br>${rp(v.h)} − ${rp(o)} = <b>${rp(b)}</b>`,
+ tip:`Trik: 10% dari ${rp(v.h)} = ${rp(v.h/10)}. Geser koma satu angka ke kiri!`}}},
+{n:"🔗 Diskon Bertingkat",t:"Diskon Bertingkat",d:"Diskon dua kali, misalnya 50% lalu tambah 10%. Hasilnya bukan 60%!",
+ f:[["h","Harga barang (Rp)",100000,"rp"],["a","Diskon pertama (%)",50,"pc"],["b","Diskon kedua (%)",10,"pc"]],
+ c:v=>{const x=v.h*(1-v.a/100),y=x*(1-v.b/100),tot=(1-y/v.h)*100;return{r:[["Setelah diskon 1",rp(x)],["Setelah diskon 2",rp(y)],["Total hemat",rp(v.h-y),1],["Setara diskon",pc(tot)]],bar:[100-tot,"Bayar "+pc(100-tot),tot,"Hemat"],
+ s:`<b>1. Diskon pertama</b><br>${rp(v.h)} − ${pc(v.a)} = <b>${rp(x)}</b><br><b>2. Diskon kedua dari harga BARU</b><br>${rp(x)} − ${pc(v.b)} = <b>${rp(y)}</b><br><b>3. Total</b><br>Setara diskon <b>${pc(tot)}</b>, bukan ${pc(+v.a+ +v.b)}.`,
+ tip:"Diskon kedua dihitung dari harga yang sudah turun, bukan dari harga awal. Itu sebabnya totalnya selalu lebih kecil dari penjumlahan."}}},
+{n:"🧾 PPN / Pajak",t:"PPN / Pajak",d:"Harga bisa naik karena pajak. PPN di Indonesia saat ini 11%.",
+ f:[["h","Harga sebelum pajak (Rp)",100000,"rp"],["p","Pajak (%)",11,"pc"]],ex:[[["p",10],["p",11],["p",12]]],
+ c:v=>{const x=v.h*v.p/100,tot=v.h+x;return{r:[["Pajak",rp(x),1],["Total bayar",rp(tot)]],bar:[100,"Harga "+rp(v.h),0,""],
+ s:`<b>1. Hitung pajak</b><br>${rp(v.h)} × ${pc(v.p)} ÷ 100 = <b>${rp(x)}</b><br><b>2. Tambahkan ke harga</b><br>${rp(v.h)} + ${rp(x)} = <b>${rp(tot)}</b>`,
+ tip:`Jalan pintas: kalikan langsung dengan ${(1+v.p/100).toFixed(2).replace(".",",")} untuk mendapat total.`}}},
+{n:"❓ Cari Persen",t:"Cari Persen",d:"Kalau tahu bagian dan totalnya, berapa persennya?",
+ f:[["a","Bagian (angka)",20000,"rp"],["b","Total (angka)",80000,"rp"]],
+ c:v=>{const p=v.b?v.a/v.b*100:0;return{r:[["Hasil",pc(p),1]],bar:[Math.min(p,100),pc(p),Math.max(100-p,0),""],
+ s:`<b>Rumus</b><br>bagian ÷ total × 100<br><b>Hitung</b><br>${rp(v.a)} ÷ ${rp(v.b)} × 100 = <b>${pc(p)}</b>`,
+ tip:"Contoh: nilai ujian 40 dari 50 soal benar = 40 ÷ 50 × 100 = 80%."}}},
+{n:"📈 Untung & Rugi",t:"Untung & Rugi",d:"Beli di harga modal, jual di harga jual. Untung atau rugi berapa persen?",
+ f:[["m","Harga beli / modal (Rp)",80000,"rp"],["j","Harga jual (Rp)",100000,"rp"]],
+ c:v=>{const s=v.j-v.m,p=v.m?s/v.m*100:0,u=s>=0;return{r:[[u?"Untung":"Rugi",rp(Math.abs(s)),1],["Persen dari modal",pc(Math.abs(p))]],bar:[100,"Modal "+rp(v.m),0,""],
+ s:`<b>1. Selisih</b><br>${rp(v.j)} − ${rp(v.m)} = <b>${rp(s)}</b> (${u?"untung":"rugi"})<br><b>2. Persen terhadap MODAL</b><br>${rp(Math.abs(s))} ÷ ${rp(v.m)} × 100 = <b>${pc(Math.abs(p))}</b>`,
+ tip:"Persen untung/rugi selalu dihitung dari harga beli (modal), bukan harga jual."}}},
+{n:"⚖️ Bandingkan",t:"Bandingkan Penawaran",d:"Mana lebih hemat: diskon persen atau Beli 2 Gratis 1?",
+ f:[["h","Harga satuan (Rp)",30000,"rp"],["d","Penawaran A: diskon (%)",30,"pc"]],
+ c:v=>{const a=v.h*(1-v.d/100),b=v.h*2/3,eq=100/3,win=a<b?"A":a>b?"B":"seri";return{r:[["A: diskon "+pc(v.d)+" per barang",rp(a)],["B: Beli 2 Gratis 1 per barang",rp(b)],["Pemenang",win==="seri"?"Sama saja":"Penawaran "+win,1]],bar:[100-Math.max(v.d,eq),"",0,""],
+ s:`<b>A</b>: ${rp(v.h)} × (100 − ${pc(v.d)}) ÷ 100 = <b>${rp(a)}</b> per barang<br><b>B</b>: bayar 2 untuk dapat 3, jadi ${rp(v.h*2)} ÷ 3 = <b>${rp(b)}</b> per barang<br>Beli 2 Gratis 1 setara diskon <b>33,3%</b>.`,
+ tip:"Diskon di atas 33,3% lebih hemat dari Beli 2 Gratis 1. Di bawahnya, B lebih menguntungkan."}}}
+];
+let cur=0,vals={};
+const parse=(s,k)=>k==="rp"?(parseInt(String(s).replace(/\D/g,""))||0):(parseFloat(String(s).replace(",","."))||0);
+function tabs(){
+  $("tabs").innerHTML="";
+  T.forEach((x,i)=>{const b=document.createElement("button");b.textContent=x.n;b.className=i===cur?"on":"";b.onclick=()=>{cur=i;load()};$("tabs").appendChild(b)});
 }
-$("t1").onclick=()=>tab(1);$("t2").onclick=()=>tab(2);
-
-// ---- Belajar ----
-[10,20,25,50,75].forEach(p=>{
-  const b=document.createElement("button");b.className="chip";b.textContent=p+"%";b.dataset.p=p;
-  b.onclick=()=>{pct=p;$("pr").value=p;render()};$("chips").appendChild(b);
-});
-$("pr").oninput=e=>{pct=+e.target.value;render()};
-$("price").oninput=e=>{const v=num(e.target.value);e.target.value=v?v.toLocaleString("id-ID"):"";render()};
-function render(){
-  const h=num($("price").value),d=h*pct/100,b=h-d;
-  $("pv").textContent=pct;
-  document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",+c.dataset.p===pct));
-  $("off").textContent=rp(d);$("pay").textContent=rp(b);
-  $("bpay").style.width=(100-pct)+"%";$("bpay").textContent=pct<85?"Bayar "+(100-pct)+"%":"";
-  $("boff").textContent=pct>=15?"Diskon "+pct+"%":"";
-  $("steps").innerHTML=
-    `<b>Langkah 1 — cari potongan</b><br>${rp(h)} × ${pct} ÷ 100 = <b>${rp(d)}</b><br>`+
-    `<b>Langkah 2 — kurangi harga</b><br>${rp(h)} − ${rp(d)} = <b>${rp(b)}</b><br>`+
-    `<span class="mut">Trik cepat: ${pct}% dari ${rp(h)} = ${rp(h/100)} (1%) × ${pct}</span>`;
+function load(){
+  const t=T[cur];tabs();$("tt").textContent=t.t;$("td").textContent=t.d;
+  vals={};$("inp").innerHTML="";
+  t.f.forEach(([k,l,df,ty])=>{
+    vals[k]=df;
+    const lb=document.createElement("label");lb.textContent=l;
+    const i=document.createElement("input");i.type="text";i.inputMode=ty==="rp"?"numeric":"decimal";
+    i.value=ty==="rp"?df.toLocaleString("id-ID"):String(df).replace(".",",");
+    i.oninput=()=>{
+      const v=parse(i.value,ty);vals[k]=v;
+      if(ty==="rp")i.value=v?v.toLocaleString("id-ID"):"";
+      calc()};
+    i.id="f_"+k;lb.appendChild(document.createElement("span"));
+    $("inp").append(lb,i);
+  });
+  $("ch").innerHTML="";
+  (t.ex||[]).forEach(g=>g.forEach(([k,v])=>{
+    const b=document.createElement("button");b.className="chip";b.textContent=pc(v);
+    b.onclick=()=>{vals[k]=v;$("f_"+k).value=String(v);calc()};$("ch").appendChild(b)}));
+  calc();
 }
-render();
-
-// ---- Kuis ----
-let cur=null,ok=0,all=0,str=0,done=false;
-const prices=[20000,40000,50000,80000,100000,120000,150000,200000,250000,500000];
-const pcts=[10,20,25,50,75];
-const pick=a=>a[Math.floor(Math.random()*a.length)];
-function newQ(){
-  const h=pick(prices),p=pick(pcts),type=Math.random()<.5?"off":"pay";
-  const d=h*p/100;
-  cur={h,p,type,a:type==="off"?d:h-d,d};
-  $("qt").innerHTML=type==="off"
-    ?`Sebuah barang harganya <b>${rp(h)}</b>, diskon <b>${p}%</b>.<br>Berapa <b>potongan harganya</b>?`
-    :`Sebuah barang harganya <b>${rp(h)}</b>, diskon <b>${p}%</b>.<br>Berapa <b>harga yang harus dibayar</b>?`;
-  $("ans").value="";$("fb").innerHTML="";$("nxt").hidden=true;$("chk").hidden=false;done=false;
-  $("ans").focus();
+function calc(){
+  const o=T[cur].c(vals);
+  let h=o.r.map(([l,v,g])=>`<div class="row"><span class="mut">${l}</span><span class="big ${g?"hl":""}">${v}</span></div>`).join("");
+  if(o.bar&&o.bar[1]!==undefined&&(o.bar[3]||o.bar[1]))h+=`<div class="bar"><div style="width:${o.bar[0]}%;background:var(--pri)">${o.bar[0]>25?o.bar[1]:""}</div>${o.bar[2]?`<div style="flex:1;background:var(--ok)">${o.bar[2]>15?o.bar[3]+" "+pc(o.bar[2]):""}</div>`:""}</div>`;
+  h+=`<div class="steps">${o.s}</div><div class="tip">💡 ${o.tip}</div>`;
+  $("res").innerHTML=h;
 }
-function check(){
-  if(done)return;
-  const v=num($("ans").value);if(!$("ans").value)return;
-  done=true;all++;
-  const good=v===cur.a;
-  if(good){ok++;str++}else str=0;
-  const ex=`${rp(cur.h)} × ${cur.p} ÷ 100 = ${rp(cur.d)}`+(cur.type==="pay"?`<br>${rp(cur.h)} − ${rp(cur.d)} = ${rp(cur.a)}`:"");
-  $("fb").innerHTML=good
-    ?`<div class="fb ok">✅ Benar! Jawabannya ${rp(cur.a)}.<br>${ex}</div>`
-    :`<div class="fb bad">❌ Belum tepat. Jawaban yang benar: <b>${rp(cur.a)}</b><br>${ex}</div>`;
-  $("sOk").textContent=ok;$("sAll").textContent=all;$("sStr").textContent=str;
-  $("chk").hidden=true;$("nxt").hidden=false;
-}
-$("chk").onclick=check;$("nxt").onclick=newQ;
-$("ans").oninput=e=>{const v=num(e.target.value);e.target.value=v?v.toLocaleString("id-ID"):""};
-$("ans").onkeydown=e=>{if(e.key==="Enter")done?newQ():check()};
+load();
 </script>
 </body>
 </html>
